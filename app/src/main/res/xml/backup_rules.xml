@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto Backup rules for API 23-30. Add <exclude .../> entries for anything that must stay on-device. -->
+<full-backup-content />

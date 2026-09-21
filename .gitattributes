@@ -1,0 +1,18 @@
+# Normalize text files to LF in the repository.
+* text=auto eol=lf
+
+# Must stay LF even when checked out on Windows, or the shell wrapper breaks on CI/Linux.
+gradlew text eol=lf
+
+# Windows batch files need CRLF.
+*.bat text eol=crlf
+
+# Binary — never touch line endings, never diff as text.
+*.jar binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.keystore binary
+*.jks binary

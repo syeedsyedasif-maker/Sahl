@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sahl.app"
-        minSdk = 24
+        minSdk = 24 // See "Device support" in the README before changing.
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"

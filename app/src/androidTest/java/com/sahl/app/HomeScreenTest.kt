@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Sahl contributors
+// Copyright (C) 2026 Syeed Syed Asif
 
 package com.sahl.app
 

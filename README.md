@@ -1,6 +1,6 @@
 # Sahl
 
-**This is a zero to hero Arabic & Quran learning android app.**
+**This is a zero to hero Arabic & Quran learning open source android app.**
 
 Built with Kotlin and Jetpack Compose.
 
@@ -9,8 +9,9 @@ Built with Kotlin and Jetpack Compose.
 | Application ID | `com.sahl.app` (debug builds install as `com.sahl.app.debug`) |
 | Language | Kotlin |
 | UI | Jetpack Compose, Material 3 |
-| minSdk / targetSdk / compileSdk | 24 / 36 / 36 — **provisional, see roadmap item 1** |
+| minSdk / targetSdk / compileSdk | 24 / 37 / 37 — **provisional, see roadmap item 1** |
 | Build | Gradle (Kotlin DSL) + version catalog at [`gradle/libs.versions.toml`](gradle/libs.versions.toml) |
+| Licence | [AGPL-3.0-or-later](LICENSE) — copyleft; see the Licence section |
 
 ## Getting started
 
@@ -68,7 +69,6 @@ Record the answers in this README and update `minSdk` / `targetSdk` to match.
 
 ### 2. Project foundations
 
-- [ ] Commit the Gradle wrapper JAR so `./gradlew` works on a clean checkout (see below)
 - [ ] Pick an architecture (ViewModel + repository, DI with Hilt or Koin, etc.)
 - [ ] Add navigation once there is more than one screen
 - [ ] Decide on local persistence (Room / DataStore / none)
@@ -90,8 +90,29 @@ Record the answers in this README and update `minSdk` / `targetSdk` to match.
 
 ## Notes
 
-- The Gradle wrapper JAR (`gradle/wrapper/gradle-wrapper.jar`) is **not** in this repo yet, so
-  `./gradlew` will not run until it is added. Android Studio regenerates it on first sync, or run
-  `gradle wrapper --gradle-version 8.13` if you have a system Gradle.
-- This machine has JDK 25 on `PATH`. AGP builds want JDK 17–21; use the JDK bundled with Android
-  Studio (*Settings → Build Tools → Gradle → Gradle JDK*) rather than the system one.
+- Build from the command line with Android Studio's bundled JDK, which differs from the one on
+  `PATH`:
+  `JAVA_HOME="/c/Program Files/Android/Android Studio/jbr" ./gradlew assembleDebug`
+- AGP 9 compiles Kotlin itself — there is no `org.jetbrains.kotlin.android` plugin. Do not re-add it.
+- `gradle/gradle-daemon-jvm.properties` pins the Gradle daemon's JVM and is checked in deliberately,
+  like the wrapper, so a machine without JDK 25 provisions one automatically.
+
+## Licence
+
+Sahl is licensed under the **GNU Affero General Public License v3.0 or later** — see
+[`LICENSE`](LICENSE). SPDX identifier: `AGPL-3.0-or-later`.
+
+In plain terms — this is the intent, not legal advice:
+
+- **Read it, learn from it, run it, share it.** That is the point of the project.
+- **If you ship a modified version, publish your source** under the same licence. That covers a
+  modified app you distribute *and* a modified backend you run as a network service. That second
+  case is the clause the AGPL adds over the plain GPL.
+- **You may charge money for it.** What you may not do is take this work closed-source.
+
+On `-or-later`: the FSF recommends it, and it lets the project adopt a future AGPL version if one is
+published. Switch the source headers to `AGPL-3.0-only` if you would rather pin to v3 exactly.
+
+The AGPL covers **the code in this repository**. Quran text, translations, recitation audio and
+fonts each carry their own separate licences and must be checked individually before bundling —
+tracked as roadmap item 3.

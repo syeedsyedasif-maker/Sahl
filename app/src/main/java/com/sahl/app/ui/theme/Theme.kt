@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Sahl contributors
+
 package com.sahl.app.ui.theme
 
 import android.os.Build

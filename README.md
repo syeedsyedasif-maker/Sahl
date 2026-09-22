@@ -1,6 +1,8 @@
 # Sahl
 
-An Android app, built with Kotlin and Jetpack Compose.
+**This is a zero to hero Arabic & Quran learning android app.**
+
+Built with Kotlin and Jetpack Compose.
 
 | | |
 |---|---|
@@ -74,8 +76,11 @@ Record the answers in this README and update `minSdk` / `targetSdk` to match.
 
 ### 3. First feature
 
-- [ ] Define what Sahl actually does — one sentence, then a first screen
-- [ ] Replace the placeholder launcher icon and app theme colors
+- [ ] Scope the first lesson — alphabet recognition, letter forms in word position, or short-surah reading
+- [ ] Decide Arabic text rendering: font, shaping, and whether diacritics (tashkeel) are shown, toggleable, or drilled
+- [ ] Choose the Quran text source and confirm its licence permits redistribution
+- [ ] Decide on recitation audio — bundled, streamed, or absent in v1
+- [ ] Replace the placeholder launcher icon and theme colors
 
 ### 4. Quality and release
 

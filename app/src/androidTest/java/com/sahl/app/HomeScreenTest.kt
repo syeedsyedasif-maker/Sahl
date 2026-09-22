@@ -20,6 +20,7 @@ class HomeScreenTest {
 
     @Test
     fun home_showsAppName() {
-        composeTestRule.onNodeWithText("Sahl").assertIsDisplayed()
+        val appName = composeTestRule.activity.getString(R.string.app_name)
+        composeTestRule.onNodeWithText(appName).assertIsDisplayed()
     }
 }

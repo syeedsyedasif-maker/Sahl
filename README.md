@@ -9,7 +9,7 @@ Built with Kotlin and Jetpack Compose.
 | Application ID | `com.sahl.app` (debug builds install as `com.sahl.app.debug`) |
 | Language | Kotlin |
 | UI | Jetpack Compose, Material 3 |
-| minSdk / targetSdk / compileSdk | 24 / 37 / 37 — **provisional, see roadmap item 1** |
+| minSdk / targetSdk / compileSdk | 24 / 37 / 37 — see [Device support](#device-support) |
 | Build | Gradle (Kotlin DSL) + version catalog at [`gradle/libs.versions.toml`](gradle/libs.versions.toml) |
 | Licence | [AGPL-3.0-or-later](LICENSE) — copyleft; see the Licence section |
 
@@ -43,29 +43,60 @@ app/
 gradle/libs.versions.toml       single source of truth for dependency versions
 ```
 
+## Device support
+
+Decided 2026-09-22, using Google's Play Store API-level distribution data.
+
+| | Decision |
+|---|---|
+| Minimum Android | Android 7.0, API 24 — reaches 99.1% of devices globally |
+| Target Android | Android 17, API 37 |
+| Screens | Phones first; tablets and foldables get layouts designed for them |
+| Orientation | Portrait and landscape, on every device |
+| Interface language | English at launch, translation-ready |
+| Out of scope | Wear OS, TV, Android Auto, XR |
+
+### Why
+
+- **API 24.** Sahl's audience — Arabic and Quran learners worldwide — is concentrated in regions
+  where older phones are more common than the global average, so reach matters more than usual.
+  With AndroidX and Compose, supporting old versions costs almost nothing extra. The lowest
+  possible value is 23, set by the AndroidX libraries.
+- **Tablets and foldables.** For apps targeting API 37, Android ignores orientation locks,
+  `resizeableActivity="false"` and aspect-ratio limits on screens at least 600dp across in their
+  narrower direction, so Sahl runs on large screens regardless. Reading the Quran and children's
+  learning are natural tablet uses.
+- **Both orientations.** Short, wide windows happen anyway — on tablets, and in split-screen on
+  phones — so locking phones to portrait would save little.
+- **English, translation-ready.** A learner starting from zero can't read Arabic yet, so the
+  interface must be in their language while lesson content is Arabic.
+
+### Rules this creates for the code
+
+- Layouts adapt to the **window size**, never to device type or orientation.
+- Use `start`/`end`, never `left`/`right`, so layouts flip correctly if a right-to-left interface
+  language (Arabic, Urdu, Persian) is added.
+- Every piece of user-visible text lives in `res/values/strings.xml`. Tests read it from there too.
+- UI state must survive the Activity being recreated: rotation, resizing, dark-mode or language
+  changes, and the process being killed in the background.
+- Quran and lesson text use a bundled font rather than the system's (roadmap item 3), so it looks
+  the same on every phone.
+
+### Test devices
+
+| Device | API | Why | Status |
+|---|---|---|---|
+| Pixel 10a emulator | 37 | Everyday development | Set up |
+| Pixel Tablet emulator | 37 | Large-screen layouts | To create |
+| Small, low-memory phone emulator | 24 | Oldest supported Android: text rendering and performance | To create |
+| Pixel 10 Pro XL emulator | 37 | Large phone | Set up |
+| A physical non-Pixel phone | any | Manufacturers such as Samsung, Xiaomi and Tecno change parts of Android, including fonts | If available |
+
 ## Roadmap
 
-### 1. Decide which devices to support
+### 1. Decide which devices to support ✓
 
-Everything downstream — layout work, testing matrix, which APIs are safe to call — hangs off this,
-so settle it before writing feature code. The values currently in
-[`app/build.gradle.kts`](app/build.gradle.kts) are placeholders chosen to compile, not decisions.
-
-Open questions:
-
-- **Minimum Android version.** `minSdk` is set to 24 (Android 7.0, ~98% of active devices). Raising
-  it to 26 or 28 removes a lot of compatibility branching; lowering it is rarely worth it. Check the
-  distribution numbers in Android Studio (*Help → New Project → minSdk → Help me choose*).
-- **Form factors.** Phone only, or also tablets / foldables / Chromebooks? Tablet and foldable
-  support means adaptive layouts (window size classes) from day one rather than a painful retrofit.
-- **Orientation.** Portrait-only is a real constraint to state up front; note that Android 16 ignores
-  orientation locks on large screens.
-- **Wear OS, TV, Auto.** Almost certainly out of scope, but say so explicitly so it stays out.
-- **Target market.** Affects which locales, RTL (the manifest already sets `supportsRtl="true"`),
-  device price tier, and therefore performance budget.
-- **Test matrix.** Which two or three physical devices are the ones that must always work.
-
-Record the answers in this README and update `minSdk` / `targetSdk` to match.
+Done — see [Device support](#device-support).
 
 ### 2. Project foundations
 

@@ -1,0 +1,87 @@
+name: Release
+
+# Runs when a version tag is pushed, e.g. v0.1.0, or v0.1.0-rc.1 for a pre-release.
+# Builds a signed release APK and publishes it as a GitHub Release, which is where
+# Obtainium looks for updates. See "Releases" in the README.
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write # to create the release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the version from the tag
+        id: version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [[ "$version" == *-* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check the signing secrets are set
+        env:
+          SAHL_KEYSTORE_BASE64: ${{ secrets.SAHL_KEYSTORE_BASE64 }}
+          SAHL_KEYSTORE_PASSWORD: ${{ secrets.SAHL_KEYSTORE_PASSWORD }}
+          SAHL_KEY_ALIAS: ${{ secrets.SAHL_KEY_ALIAS }}
+          SAHL_KEY_PASSWORD: ${{ secrets.SAHL_KEY_PASSWORD }}
+        run: |
+          missing=()
+          for name in SAHL_KEYSTORE_BASE64 SAHL_KEYSTORE_PASSWORD SAHL_KEY_ALIAS SAHL_KEY_PASSWORD; do
+            [[ -n "${!name}" ]] || missing+=("$name")
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "::error::Missing repository secrets: ${missing[*]}. See \"Releases\" in the README."
+            exit 1
+          fi
+
+      - name: Restore the signing key
+        env:
+          SAHL_KEYSTORE_BASE64: ${{ secrets.SAHL_KEYSTORE_BASE64 }}
+        run: echo "$SAHL_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # The configuration cache is off so the signing passwords are never written into it.
+      - name: Build the signed release APK
+        env:
+          SAHL_VERSION: ${{ steps.version.outputs.version }}
+          SAHL_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          SAHL_KEYSTORE_PASSWORD: ${{ secrets.SAHL_KEYSTORE_PASSWORD }}
+          SAHL_KEY_ALIAS: ${{ secrets.SAHL_KEY_ALIAS }}
+          SAHL_KEY_PASSWORD: ${{ secrets.SAHL_KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease -Psahl.version="$SAHL_VERSION" --no-configuration-cache --stacktrace
+
+      - name: Check the APK is signed
+        run: |
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          "$apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SAHL_VERSION: ${{ steps.version.outputs.version }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          apk="sahl-$SAHL_VERSION.apk"
+          cp app/build/outputs/apk/release/app-release.apk "$apk"
+          flags=(--title "Sahl $SAHL_VERSION" --generate-notes --verify-tag)
+          if [[ "$PRERELEASE" == true ]]; then
+            flags+=(--prerelease)
+          fi
+          gh release create "$GITHUB_REF_NAME" "$apk" "${flags[@]}"

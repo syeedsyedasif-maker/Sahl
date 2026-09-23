@@ -148,7 +148,7 @@ Done — see [Device support](#device-support).
 - [ ] Add a navigation library when a tab gets its first sub-screen
 - [ ] Decide on local persistence (Room / DataStore / none)
 - [x] Release workflow: tag a version, get a signed APK on the Releases page
-- [ ] Add the release signing key to the repository secrets (see Releases)
+- [x] Release signing key stored in the repository secrets (see Releases)
 
 ### 3. First feature
 

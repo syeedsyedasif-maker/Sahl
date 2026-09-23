@@ -11,4 +11,7 @@
     <string name="learn_placeholder">Lessons, from the Arabic alphabet up, will appear here.</string>
     <string name="quran_placeholder">The Quran reader will appear here.</string>
     <string name="profile_placeholder">Your progress and settings will appear here.</string>
+
+    <!-- Temporary: shows that a GitHub release installed through Obtainium is running. -->
+    <string name="release_check">Hello Syeed, releases seem to work</string>
 </resources>

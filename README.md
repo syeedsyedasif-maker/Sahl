@@ -95,6 +95,46 @@ Decided 2026-09-22, using Google's Play Store API-level distribution data.
 | Pixel 10 Pro XL emulator | 37 | Large phone | Set up |
 | A physical non-Pixel phone | any | Manufacturers such as Samsung, Xiaomi and Tecno change parts of Android, including fonts | If available |
 
+## Releases
+
+Releases are built by GitHub Actions ([`release.yml`](.github/workflows/release.yml)) and
+published on the [Releases page](https://github.com/syeedsyedasif-maker/Sahl/releases), where
+[Obtainium](https://github.com/ImranR98/Obtainium) installs and updates Sahl from. In Obtainium,
+add the repository URL; enable **Include prereleases** to also get release candidates.
+
+**Publishing a release.** Push a tag named after the version:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+A tag with a hyphen, such as `v0.1.0-rc.1`, is published as a pre-release.
+
+**Version numbers.** The tag sets both the version name and Android's versionCode, which must
+grow with every release or phones refuse the update. `versionCodeFor` in
+[`app/build.gradle.kts`](app/build.gradle.kts) maps `0.1.0-rc.1` → 10001, `0.1.0` → 10099 and
+`0.1.1` → 10199, so a pre-release always sorts before the release it leads up to.
+
+**Signing.** Every release must be signed with the same key, or Android won't install it as an
+update. The key never enters the repository: the workflow reads it from four repository
+secrets, under *Settings → Secrets and variables → Actions*.
+
+| Secret | Contents |
+|---|---|
+| `SAHL_KEYSTORE_BASE64` | The keystore file, base64-encoded |
+| `SAHL_KEYSTORE_PASSWORD` | The keystore's password |
+| `SAHL_KEY_ALIAS` | The key's alias |
+| `SAHL_KEY_PASSWORD` | The key's password |
+
+GitHub secrets can be replaced but never read back, so keep your own backups of the keystore
+and its password. If the key is lost, people who installed Sahl can't receive updates without
+uninstalling first.
+
+To build a signed release locally, set `SAHL_KEYSTORE_PATH` to the keystore file plus the other
+three variables above, then run
+`./gradlew :app:assembleRelease -Psahl.version=0.1.0 --no-configuration-cache`.
+
 ## Roadmap
 
 ### 1. Decide which devices to support ✓
@@ -107,7 +147,8 @@ Done — see [Device support](#device-support).
 - [x] Main navigation: Learn, Quran and Profile tabs, as a bottom bar or side rail depending on window size
 - [ ] Add a navigation library when a tab gets its first sub-screen
 - [ ] Decide on local persistence (Room / DataStore / none)
-- [ ] Set up the release signing config and keep the keystore out of git
+- [x] Release workflow: tag a version, get a signed APK on the Releases page
+- [ ] Add the release signing key to the repository secrets (see Releases)
 
 ### 3. First feature
 
@@ -119,7 +160,7 @@ Done — see [Device support](#device-support).
 
 ### 4. Quality and release
 
-- [ ] Wire up CI (a GitHub Actions workflow is scaffolded at `.github/workflows/android.yml`)
+- [x] CI: build, lint and unit tests on every push and pull request
 - [ ] Add crash reporting / analytics, if wanted
 - [ ] Play Console listing, privacy policy, data safety form
 

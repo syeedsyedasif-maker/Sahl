@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sahl</string>
-    <string name="home_placeholder">Your app starts here.</string>
+
+    <!-- Main navigation -->
+    <string name="nav_learn">Learn</string>
+    <string name="nav_quran">Quran</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Placeholders, replaced as each tab is built -->
+    <string name="learn_placeholder">Lessons, from the Arabic alphabet up, will appear here.</string>
+    <string name="quran_placeholder">The Quran reader will appear here.</string>
+    <string name="profile_placeholder">Your progress and settings will appear here.</string>
 </resources>

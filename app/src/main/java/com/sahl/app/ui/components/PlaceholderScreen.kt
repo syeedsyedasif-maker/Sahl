@@ -6,6 +6,7 @@ package com.sahl.app.ui.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-/** Stands in for a tab that hasn't been built yet: its title and a line saying what's coming. */
+/**
+ * Stands in for a tab that hasn't been built yet: its title and a line saying what's coming.
+ * Anything in [content] appears underneath.
+ */
 @Composable
 fun PlaceholderScreen(
     @StringRes title: Int,
     @StringRes message: Int,
     modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -42,5 +47,6 @@ fun PlaceholderScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        content()
     }
 }

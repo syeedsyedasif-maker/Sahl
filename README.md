@@ -35,9 +35,12 @@ From the command line, once the SDK is installed:
 
 ```
 app/
-  src/main/java/com/sahl/app/   MainActivity + Compose UI
+  src/main/java/com/sahl/app/   MainActivity, SahlApp (root composable + main navigation)
+             navigation/        the Learn / Quran / Profile tabs
+             ui/learn/, ui/quran/, ui/profile/   one package per tab
+             ui/components/     composables shared across screens
              ui/theme/          Material 3 color, type, theme
-  src/main/res/                 strings, themes, launcher icon
+  src/main/res/                 strings, themes, launcher and tab icons
   src/test/                     JVM unit tests
   src/androidTest/              instrumented / Compose UI tests
 gradle/libs.versions.toml       single source of truth for dependency versions
@@ -101,7 +104,8 @@ Done — see [Device support](#device-support).
 ### 2. Project foundations
 
 - [ ] Pick an architecture (ViewModel + repository, DI with Hilt or Koin, etc.)
-- [ ] Add navigation once there is more than one screen
+- [x] Main navigation: Learn, Quran and Profile tabs, as a bottom bar or side rail depending on window size
+- [ ] Add a navigation library when a tab gets its first sub-screen
 - [ ] Decide on local persistence (Room / DataStore / none)
 - [ ] Set up the release signing config and keep the keystore out of git
 
@@ -147,3 +151,7 @@ published. Switch the source headers to `AGPL-3.0-only` if you would rather pin 
 The AGPL covers **the code in this repository**. Quran text, translations, recitation audio and
 fonts each carry their own separate licences and must be checked individually before bundling —
 tracked as roadmap item 3.
+
+The tab icons are [Material Symbols](https://github.com/google/material-design-icons) by Google,
+under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), which is compatible
+with the AGPL. Each icon file notes its source and the one change made to it.
